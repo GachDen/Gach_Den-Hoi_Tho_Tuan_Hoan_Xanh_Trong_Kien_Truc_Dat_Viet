@@ -165,21 +165,19 @@
         .media-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 40px; }
         .media-gallery img { width: 100%; height: 250px; object-fit: cover; border-radius: 10px; transition: transform .3s; }
         .media-gallery img:hover { transform: scale(1.03); }
-        /* Video MP4: dùng đường dẫn tương đối để hoạt động cả trên máy và GitHub Pages. */
         .video-container {
-            position: relative; aspect-ratio: 16 / 9; overflow: hidden;
+            position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;
             border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); background: #1c2833;
         }
-        .project-video {
-            position: absolute; inset: 0; display: block; width: 100%; height: 100%;
-            object-fit: contain; background: #1c2833;
+        .video-container iframe, .video-placeholder {
+            position: absolute; inset: 0; width: 100%; height: 100%; border: 0;
         }
-        .video-notice {
-            position: absolute; inset: 0; z-index: 3;
+        .video-placeholder {
             display: flex; align-items: center; justify-content: center; text-align: center;
-            padding: 24px; background: #1c2833; color: #efffff; font-size: 1.05rem;
+            color: #cfd8dc; padding: 20px; font-size: 1.1rem;
         }
-        .video-notice[hidden] { display: none; }
+
+        .video-placeholder { cursor: zoom-in; }
         .video-expand {
             position: absolute; top: 12px; right: 12px; z-index: 2;
             background: rgba(0,0,0,0.65); color: #fff; border: none; border-radius: 6px;
@@ -188,7 +186,7 @@
         .video-expand:hover { background: var(--green); }
         .media-gallery img { cursor: zoom-in; }
 
-        /* Lightbox phóng to ảnh; video sử dụng fullscreen riêng. */
+        /* Lightbox (phóng to ảnh / video) */
         .lightbox {
             position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.9);
             display: none; align-items: center; justify-content: center; padding: 40px 70px;
@@ -197,6 +195,11 @@
         @keyframes lbFade { from { opacity: 0; } to { opacity: 1; } }
         .lb-content { max-width: 100%; max-height: 100%; display: flex; align-items: center; justify-content: center; }
         .lb-content img { max-width: 100%; max-height: 88vh; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
+        .lb-content .lb-video {
+            width: min(90vw, 156vh); aspect-ratio: 16 / 9; background: #1c2833; border-radius: 8px; overflow: hidden;
+            display: flex; align-items: center; justify-content: center; color: #cfd8dc; text-align: center; padding: 20px;
+        }
+        .lb-content .lb-video iframe { width: 100%; height: 100%; border: 0; }
         .lb-btn {
             position: absolute; background: rgba(255,255,255,0.15); color: #fff; border: none;
             width: 46px; height: 46px; border-radius: 50%; font-size: 1.6rem; cursor: pointer; transition: background .2s;
@@ -205,6 +208,7 @@
         .lb-close { top: 18px; right: 22px; }
         .lb-prev { left: 15px; top: 50%; transform: translateY(-50%); }
         .lb-next { right: 15px; top: 50%; transform: translateY(-50%); }
+        .lightbox.is-video .lb-prev, .lightbox.is-video .lb-next { display: none; }
         @media (max-width: 768px) { .lightbox { padding: 60px 10px 20px; } .lb-prev { left: 5px; } .lb-next { right: 5px; } }
 
         /* Liên hệ */
@@ -338,21 +342,24 @@
             <img src="san-pham.jpg" alt="Mẫu gạch sinh học">
         </div>
 
-        <div class="video-container fade-in">
-            <!-- VIDEO GẠCH ĐEN: đặt file video-gach-den.mp4 CÙNG THƯ MỤC với index.html.
-                 Khi đăng GitHub Pages, tải CẢ index.html và video-gach-den.mp4 lên repository.
-                 Nếu dùng tên khác, sửa đường dẫn trong src bên dưới cho khớp 100%. -->
-            <video id="projectVideo" class="project-video" controls playsinline preload="metadata"
-                   aria-label="Video giới thiệu dự án Gạch Đen">
-                <source src="video-du-an-gach-den.mp4" type="video/mp4">
-                Trình duyệt không hỗ trợ phát video MP4.
-            </video>
-            <button class="video-expand" id="videoExpand" type="button" aria-label="Phóng to video">⛶ Phóng to</button>
-            <div id="videoNotice" class="video-notice" role="status" hidden>
-                Chưa tải được video. Hãy đặt video-gach-den.mp4 cùng thư mục với index.html,
-                rồi tải cả hai tệp lên GitHub.
-            </div>
-        </div>
+        
+    <div class="video-container fade-in">
+
+        <button class="video-expand"
+                id="videoExpand"
+                type="button">
+            ⛶ Phóng to
+        </button>
+
+        <iframe
+            src="https://www.youtube.com/watch?v=0jldYMTJzv4"
+            title="Video giới thiệu dự án Gạch Đen"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+        </iframe>
+
+    </div>
+
     </section>
 
     <!-- Liên hệ -->
@@ -373,7 +380,7 @@
         <p>© 2026 Dự án <span>Gạch Đen</span> - Vật liệu xanh cho nông nghiệp tuần hoàn.</p>
     </footer>
 
-    <!-- Lightbox phóng to ảnh -->
+    <!-- Lightbox phóng to ảnh / video -->
     <div class="lightbox" id="lightbox" aria-hidden="true">
         <button class="lb-btn lb-close" id="lbClose" aria-label="Đóng">✕</button>
         <button class="lb-btn lb-prev" id="lbPrev" aria-label="Ảnh trước">‹</button>
@@ -382,7 +389,7 @@
     </div>
 
     <script>
-        // Phóng to ảnh
+        // Phóng to ảnh / video
         const lb = document.getElementById('lightbox');
         const lbContent = document.getElementById('lbContent');
         const galleryImgs = Array.from(document.querySelectorAll('.media-gallery img'));
@@ -403,41 +410,30 @@
             document.body.style.overflow = 'hidden';
         }
         function closeLightbox() {
-            lb.classList.remove('open');
+            lb.classList.remove('open', 'is-video');
             lb.setAttribute('aria-hidden', 'true');
-            lbContent.innerHTML = '';
+            lbContent.innerHTML = ''; // dừng video nếu đang phát
             document.body.style.overflow = '';
         }
-        // Video sử dụng file MP4 thật, không cần YouTube hoặc đường dẫn trên máy cá nhân.
-        const projectVideo = document.getElementById('projectVideo');
-        const videoNotice = document.getElementById('videoNotice');
-        const videoExpand = document.getElementById('videoExpand');
-        const showVideoError = () => {
-            videoNotice.hidden = false;
-            videoExpand.hidden = true;
-        };
-        const hideVideoError = () => {
-            videoNotice.hidden = true;
-            videoExpand.hidden = false;
-        };
-        projectVideo.addEventListener('error', showVideoError);
-        projectVideo.querySelector('source').addEventListener('error', showVideoError);
-        projectVideo.addEventListener('loadedmetadata', hideVideoError);
-        videoExpand.addEventListener('click', () => {
-            // Phóng to chính video đang phát: không mất vị trí hoặc âm thanh.
-            if (projectVideo.requestFullscreen) {
-                const request = projectVideo.requestFullscreen();
-                if (request && typeof request.catch === 'function') {
-                    request.catch(() => {
-                        if (projectVideo.webkitEnterFullscreen) projectVideo.webkitEnterFullscreen();
-                    });
-                }
-            } else if (projectVideo.webkitEnterFullscreen) {
-                projectVideo.webkitEnterFullscreen(); // Safari / iPhone
+        function openVideo() {
+            const box = document.createElement('div');
+            box.className = 'lb-video';
+            const iframe = document.querySelector('.video-container iframe');
+            if (iframe) {
+                box.appendChild(iframe.cloneNode(true));
+            } else {
+                box.textContent = 'Video giới thiệu dự án sẽ được cập nhật tại đây';
             }
-        });
+            lbContent.innerHTML = '';
+            lbContent.appendChild(box);
+            lb.classList.add('is-video');
+            openLightbox();
+        }
 
-        galleryImgs.forEach((img, i) => img.addEventListener('click', () => { showImage(i); openLightbox(); }));
+        galleryImgs.forEach((img, i) => img.addEventListener('click', () => { showImage(i); lb.classList.remove('is-video'); openLightbox(); }));
+        document.getElementById('videoExpand').addEventListener('click', openVideo);
+        const ph = document.querySelector('.video-placeholder');
+        if (ph) ph.addEventListener('click', openVideo);
 
         document.getElementById('lbClose').addEventListener('click', closeLightbox);
         document.getElementById('lbPrev').addEventListener('click', () => showImage(lbIndex - 1));
@@ -446,8 +442,10 @@
         document.addEventListener('keydown', (e) => {
             if (!lb.classList.contains('open')) return;
             if (e.key === 'Escape') closeLightbox();
-            if (e.key === 'ArrowLeft') showImage(lbIndex - 1);
-            if (e.key === 'ArrowRight') showImage(lbIndex + 1);
+            if (!lb.classList.contains('is-video')) {
+                if (e.key === 'ArrowLeft') showImage(lbIndex - 1);
+                if (e.key === 'ArrowRight') showImage(lbIndex + 1);
+            }
         });
 
         // Menu di động
